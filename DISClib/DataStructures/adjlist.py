@@ -107,7 +107,7 @@ def removeVertex(graph, vertex):
     Raises:
         Exception
     """
-    # TODO
+    #TODO
     pass
 
 

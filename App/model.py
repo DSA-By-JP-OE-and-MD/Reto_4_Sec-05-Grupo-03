@@ -40,13 +40,64 @@ de creacion y consulta sobre las estructuras de datos.
 
 # -----------------------------------------------------
 #                       API
+def analyzer():
+    analyzer = {"index":None,
+                "graph":None}
+    analyzer["index"] = m.newMap(numelements=1000, 
+                                  prime=109345121, 
+                                  maptype="CHAINING",
+                                  loadfactor=1.0, 
+                                  comparefunction=None)      
+
+    analyzer["graph"] = gr.newGraph(datastructure='ADJ_LIST',
+                                  directed=True,
+                                  size=1000,
+                                  comparefunction=comparer)
+    return analyzer
+
 # -----------------------------------------------------
 
 # Funciones para agregar informacion al grafo
+def AñadirRuta(analyzer, route):
+    """
+    """
+    origin = route['start station id']
+    destination = route['end station id']
+    duration = int(route['tripduration'])
+    AñadirEstacion(analyzer, origin)
+    AñadirEstacion(analyzer, destination)
+    AñadirConeccion(analyzer, origin, destination, duration)
+
+def  AñadirEstacion(analyzer, estacion):
+    if not gr.containsVertex(analyzer["graph"], estacion):
+        gr.insertVertex(analyzer["graph"], estacion)
+    return analyzer
+
+def AñadirConeccion(analyzer, origin, destination, duration):
+    """
+    Adiciona un arco entre dos estaciones
+    """
+    edge = gr.getEdge(analyzer["graph"], origin, destination)
+    if edge is None:
+        gr.addEdge(analyzer["graph"], origin, destination, duration)
+    else:
+        edge["weight"] = (edge["weight"]+int(duration))/2
+    
+    return analyzer
 
 # ==============================
 # Funciones de consulta
 # ==============================
+def TotaldeClusteres(analyzer):
+    A = scc.KosarajuSCC(analyzer["graph"])
+    return scc.connectedComponents(A)
+def ClusterPresence(analyzer,id1,id2):
+    A = scc.KosarajuSCC(analyzer["graph"])
+    return scc.stronglyConnected(A, id1, id2)
+def TotalDeVertices(analyzer):
+    return gr.numVertices(analyzer["graph"])
+def TotalDeArcos(analyzer):
+    return gr.numEdges(analyzer["graph"])
 
 # ==============================
 # Funciones Helper
@@ -55,3 +106,14 @@ de creacion y consulta sobre las estructuras de datos.
 # ==============================
 # Funciones de Comparacion
 # ==============================
+def comparer(stop, keyvaluestop):
+    """
+    Compara dos estaciones
+    """
+    stopcode = keyvaluestop['key']
+    if (stop == stopcode):
+        return 0
+    elif (stop > stopcode):
+        return 1
+    else:
+        return -1
