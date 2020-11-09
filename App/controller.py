@@ -27,7 +27,7 @@
 import config as cf
 from App import model
 import csv
-
+import os
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 Existen algunas operaciones en las que se necesita invocar
@@ -38,14 +38,46 @@ recae sobre el controlador.
 
 # ___________________________________________________
 #  Inicializacion del catalogo
+def InitCatalog():
+    Analyzer = model.analyzer()
+    return Analyzer
 # ___________________________________________________
 
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
+def loadTrips(analyzer):
+    archivos = []
+    for filename in os.listdir(cf.data_dir):
+        if filename.endswith('.csv'):
+            archivos.append(filename)
+            loadFile(analyzer, filename)
+    V = model.TotalDeVertices(analyzer)
+    A = model.TotalDeArcos(analyzer)
+    archivos.append({"Total de Vertices":V})
+    archivos.append({"Total de Arcos":A})
+    return archivos
+
+
+    
+def loadFile(analyzer, file):
+    """
+    """
+    file = cf.data_dir + file
+    input_file = csv.DictReader(open(file, encoding="utf-8"),
+                                delimiter=",")
+    for route in input_file:
+        model.AñadirRuta(analyzer, route)
+    return analyzer
+
+
 # ___________________________________________________
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+def totaldeclusters(analyzer):
+    return model.TotaldeClusteres(analyzer)
+def clusterentre2id(analyzer,id1,id2):
+    return model.ClusterPresence(analyzer,id1,id2)
