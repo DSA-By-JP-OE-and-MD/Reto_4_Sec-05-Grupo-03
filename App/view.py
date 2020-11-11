@@ -93,7 +93,10 @@ def OpcionesMenu():
 
         elif Kaneki == "0":
             Data = controller.loadTrips(analyzer)
-            print("Se cargaron los archivos:", Data)
+            print("Se cargaron los archivos:")
+            print("\n")
+            for n in Data:
+                print(n)
 
         elif Kaneki == "7":
             A = False

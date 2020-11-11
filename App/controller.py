@@ -55,8 +55,10 @@ def loadTrips(analyzer):
             loadFile(analyzer, filename)
     V = model.TotalDeVertices(analyzer)
     A = model.TotalDeArcos(analyzer)
+    K = model.TotaldeClusteres(analyzer)
     archivos.append({"Total de Vertices":V})
     archivos.append({"Total de Arcos":A})
+    archivos.append({"Total de Clusteres":K})
     return archivos
 
 
