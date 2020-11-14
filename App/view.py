@@ -46,8 +46,58 @@ operación seleccionada.
 
 # ___________________________________________________
 #  Menu principal
+def Menu():
+    print("\n")
+    print("🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞")
+    print("Bienvenido")
+    print("I) Iniciar el catalogo")
+    print("0) Cargar archivos al catalogo")
+    print("1) REQ. 1: Cantidad de clusters de Viajes ")
+    print("2) REQ. 2: Ruta turística Circular ")
+    print("3) REQ. 3: Estaciones críticas")
+    print("4) REQ. 4: Ruta turística por resistencia ")
+    print("5) REQ. 5: Recomendador de Rutas ")
+    print("6) REQ. 6: Ruta de interés turístico ")
+    print("7) Cerrar App")
+    print("🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞🍞")
+
 # ___________________________________________________
 
 """
 Menu principal
 """
+def Req1(analyzer):
+    id1 = input("ID de la primera estación: ")
+    id2 = input("ID de la segunda estacion: ")
+    t = controller.totaldeclusters(analyzer)
+    p = controller.clusterentre2id(analyzer,id1,id2)
+    print("Total de clústeres: ",t)
+    print("¿Hay componentes fuertemente conectados entre los 2 ids?: ",p)
+
+def OpcionesMenu():
+    analyzer = None
+    A = True
+    while A is True:
+        Menu()
+        Kaneki = str(input("Seleccione una opción:"))
+
+        if Kaneki == "I":
+            analyzer = controller.InitCatalog()
+            if analyzer != None:  
+                print("Catalogo creado") 
+            else:
+                print("Error al cargar el catalogo")
+        
+        elif Kaneki == "1":
+            Req1(analyzer)
+
+        elif Kaneki == "0":
+            Data = controller.loadTrips(analyzer)
+            print("Se cargaron los archivos:")
+            print("\n")
+            for n in Data:
+                print(n)
+
+        elif Kaneki == "7":
+            A = False
+OpcionesMenu()
