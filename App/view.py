@@ -43,7 +43,19 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-
+def printReq3(resp):
+    print("\n")
+    print("TOP 3 ESTACIONES DE SALIDA")
+    for i in resp["salidas"]:
+        print("- "+i)
+    print("\n")
+    print("TOP 3 ESTACIONES DE DESTINO")
+    for i in resp["llegadas"]:
+        print("- "+i)
+    print("\n")
+    print("TOP 3 ESTACIONES MENOS USADAS")
+    for i in resp["usadas"]:
+        print("- "+i)
 # ___________________________________________________
 #  Menu principal
 def Menu():
@@ -97,6 +109,10 @@ def OpcionesMenu():
             print("\n")
             for n in Data:
                 print(n)
+
+        elif Kaneki == "3":
+            X = controller.estacionesCriticas(analyzer)
+            printReq3(X)
 
         elif Kaneki == "7":
             A = False
