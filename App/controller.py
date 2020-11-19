@@ -26,6 +26,7 @@
 
 import config as cf
 from App import model
+from DISClib.ADT import orderedmap as om
 import csv
 import os
 """
@@ -83,3 +84,13 @@ def totaldeclusters(analyzer):
     return model.TotaldeClusteres(analyzer)
 def clusterentre2id(analyzer,id1,id2):
     return model.ClusterPresence(analyzer,id1,id2)
+
+def estacionesCriticas(analyzer):
+    A = model.top3llegada(analyzer)
+    B = model.top3salida(analyzer)
+    C = model.top3menosUsadas(analyzer)
+    N = {"llegadas":B,
+         "salidas":A,
+         "usadas":C}
+    return N
+ 
