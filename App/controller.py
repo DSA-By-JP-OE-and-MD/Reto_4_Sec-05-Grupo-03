@@ -93,3 +93,4 @@ def estacionesCriticas(analyzer):
          "salidas":B,
          "usadas":C}
     return N
+ 
