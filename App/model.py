@@ -33,6 +33,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Algorithms.Graphs import dfo
+from DISClib.Algorithms.Sorting import mergesort as mrg
 from DISClib.Utils import error as error
 assert config
 
@@ -130,7 +131,6 @@ def top3llegada(analyzer):
         mayorllegada.append(maxima)
         om.deleteMax(arrivetree)
         i+=1
-    del arrivetree
     estaciones = []
     for i in mayorllegada:
         H = m.get(analyzer["nameIndex"], str(i))
@@ -152,7 +152,6 @@ def top3salida(analyzer):
         mayorsalida.append(maxima)
         om.deleteMax(startree)
         i+=1
-    del startree
     estaciones = []
     for i in mayorsalida:
         H = m.get(analyzer["nameIndex"], str(i))
@@ -160,27 +159,53 @@ def top3salida(analyzer):
         estaciones.append(G)
     return estaciones
 
-def top3menosUsadas(analyzer):
-    totaltree = om.newMap(omaptype="RBT", comparefunction=compareIds)
+# def top3menosUsadas(analyzer):
+#     totaltree = om.newMap(omaptype="RBT", comparefunction=compareIds)
+#     pqiterator = it.newIterator(vertexNames(analyzer))
+#     while it.hasNext(pqiterator):
+#         vert = int(it.next(pqiterator))
+#         usototal = (gr.outdegree(analyzer["graph"], str(vert)) + gr.indegree(analyzer["graph"], str(vert)))
+#         om.put(totaltree, usototal, vert)
+#     menortotal = []
+#     i = 0
+#     while i < 3:
+#         C = om.values(totaltree, om.minKey(totaltree), om.minKey(totaltree))
+#         minima = lt.firstElement(C)
+#         menortotal.append(minima)
+#         om.deleteMin(totaltree)
+#         i+=1
+#     estaciones = []
+#     for i in menortotal:
+#         H = m.get(analyzer["nameIndex"], str(i))
+#         G = me.getValue(H)
+#         estaciones.append(G)
+#     return estaciones
+
+def top3lessUsed(analyzer):
+    totaltable = m.newMap(numelements=600,
+                          maptype="CHAINING",
+                          loadfactor=1,
+                          comparefunction=comparer)
     pqiterator = it.newIterator(vertexNames(analyzer))
     while it.hasNext(pqiterator):
         vert = int(it.next(pqiterator))
         usototal = (gr.outdegree(analyzer["graph"], str(vert)) + gr.indegree(analyzer["graph"], str(vert)))
-        om.put(totaltree, usototal, vert)
-    menortotal = []
-    i = 0
-    while i < 3:
-        C = om.values(totaltree, om.minKey(totaltree), om.minKey(totaltree))
-        minima = lt.firstElement(C)
-        menortotal.append(minima)
-        om.deleteMin(totaltree)
-        i+=1
-    del totaltree
-    estaciones = []
+        if not m.contains(totaltable, usototal):
+            m.put(totaltable, usototal, str(vert))
+        else:
+            A = m.get(totaltable, usototal)
+            B = me.getValue(A)
+            m.put(totaltable, usototal, str(B)+","+str(vert))
+    P = m.keySet(totaltable)
+    mrg.mergesort(P, lessfunction)
+    val = m.get(totaltable, lt.firstElement(P))
+    val1 = me.getValue(val)
+    menortotal = val1.split(",")[:3]
+    estaciones = lt.newList(datastructure="ARRAY_LIST")
     for i in menortotal:
-        H = m.get(analyzer["nameIndex"], str(i))
-        G = me.getValue(H)
-        estaciones.append(G)
+        K = m.get(analyzer["nameIndex"], i)
+        L = me.getValue(K)
+        lt.addLast(estaciones, L)
     return estaciones
 
 # ==============================
@@ -208,3 +233,8 @@ def comparer(stop, keyvaluestop):
         return 1
     else:
         return -1
+
+def lessfunction(ele1, ele2):
+    if ele1 < ele2:
+        return True
+    return False

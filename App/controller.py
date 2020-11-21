@@ -88,8 +88,8 @@ def clusterentre2id(analyzer,id1,id2):
 def estacionesCriticas(analyzer):
     A = model.top3llegada(analyzer)
     B = model.top3salida(analyzer)
-    C = model.top3menosUsadas(analyzer)
-    N = {"llegadas":B,
-         "salidas":A,
+    C = model.top3lessUsed(analyzer)
+    N = {"llegadas":A,
+         "salidas":B,
          "usadas":C}
     return N

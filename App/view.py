@@ -29,6 +29,7 @@ import sys
 import config
 from App import controller
 from DISClib.ADT import stack
+from DISClib.DataStructures import listiterator as it
 import timeit
 assert config
 
@@ -54,8 +55,10 @@ def printReq3(resp):
         print("- "+i)
     print("\n")
     print("TOP 3 ESTACIONES MENOS USADAS")
-    for i in resp["usadas"]:
-        print("- "+i)
+    itresp = it.newIterator(resp["usadas"])
+    while it.hasNext(itresp):
+        R = it.next(itresp)
+        print("- "+R)
 # ___________________________________________________
 #  Menu principal
 def Menu():
