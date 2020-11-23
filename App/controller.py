@@ -23,7 +23,8 @@
  * Dario Correal
  *
  """
-
+from DISClib.ADT import graph
+from DISClib.Algorithms.Graphs import scc
 import config as cf
 from App import model
 import csv
@@ -43,6 +44,12 @@ def InitCatalog():
     return Analyzer
 # ___________________________________________________
 
+def NoelleImpacto(analyzer, origen):
+    A = model.GrafosPorCiclo(analyzer, origen)
+    if A == False:
+        return "No se pueden encontrar ciclos con esta estación"
+    else:
+        return A
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
@@ -71,6 +78,8 @@ def loadFile(analyzer, file):
                                 delimiter=",")
     for route in input_file:
         model.AñadirRuta(analyzer, route)
+    analyzer['components'] = scc.KosarajuSCC(analyzer['graph'])
+        
     return analyzer
 
 
@@ -83,3 +92,13 @@ def totaldeclusters(analyzer):
     return model.TotaldeClusteres(analyzer)
 def clusterentre2id(analyzer,id1,id2):
     return model.ClusterPresence(analyzer,id1,id2)
+    
+def CiclosIdealesTurismo(analyzer, origen, limites):
+    A = model.CiclosDelOrigen(analyzer, origen)
+    B = model.LectorDeCiclos(analyzer, origen, A)
+    C = model.GrafosPorCiclo(analyzer, origen, B)
+    if limites == True:
+        D = model.TiempoNecesario(analyzer, C)
+        return D
+    else:
+        return C
