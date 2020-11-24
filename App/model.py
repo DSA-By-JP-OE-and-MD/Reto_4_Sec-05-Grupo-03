@@ -118,94 +118,80 @@ def vertexNames(analyzer):
 # ==============================
 
 def top3llegada(analyzer):
-    arrivetree = om.newMap(omaptype="RBT", comparefunction=compareIds)
+    intree = om.newMap(omaptype="RBT", comparefunction=compareIds)
     pqiterator = it.newIterator(vertexNames(analyzer))
     while it.hasNext(pqiterator):
         vert = int(it.next(pqiterator))
-        om.put(arrivetree, gr.indegree(analyzer["graph"], str(vert)), vert)
-    mayorllegada = []
-    i = 0
-    while i < 3:
-        C = om.values(arrivetree, om.maxKey(arrivetree), om.maxKey(arrivetree))
-        maxima = lt.firstElement(C)
-        mayorllegada.append(maxima)
-        om.deleteMax(arrivetree)
-        i+=1
-    estaciones = []
-    for i in mayorllegada:
-        H = m.get(analyzer["nameIndex"], str(i))
-        G = me.getValue(H)
-        estaciones.append(G)
+        llegadas = gr.indegree(analyzer["graph"], str(vert))
+        if not om.contains(intree, llegadas):
+            om.put(intree, llegadas, str(vert))
+        else:
+            A = om.get(intree, llegadas)
+            B = me.getValue(A)
+            om.put(intree, llegadas, str(B)+","+str(vert))
+    estaciones = lt.newList(datastructure="ARRAY_LIST")
+    while lt.size(estaciones) < 3:
+        val = om.get(intree, om.maxKey(intree))
+        val1 = me.getValue(val)
+        mayorllegada = val1.split(",")
+        for i in mayorllegada:
+            if lt.size(estaciones) < 3:
+                K = m.get(analyzer["nameIndex"], i)
+                L = me.getValue(K)
+                lt.addLast(estaciones, L)
+        om.deleteMax(intree)
     return estaciones
 
 def top3salida(analyzer):
-    startree = om.newMap(omaptype="RBT", comparefunction=compareIds)
+    outree = om.newMap(omaptype="RBT", comparefunction=compareIds)
     pqiterator = it.newIterator(vertexNames(analyzer))
     while it.hasNext(pqiterator):
         vert = int(it.next(pqiterator))
-        om.put(startree, gr.outdegree(analyzer["graph"], str(vert)), vert)
-    mayorsalida = []
-    i = 0
-    while i < 3:
-        C = om.values(startree, om.maxKey(startree), om.maxKey(startree))
-        maxima = lt.firstElement(C)
-        mayorsalida.append(maxima)
-        om.deleteMax(startree)
-        i+=1
-    estaciones = []
-    for i in mayorsalida:
-        H = m.get(analyzer["nameIndex"], str(i))
-        G = me.getValue(H)
-        estaciones.append(G)
+        salidas = gr.outdegree(analyzer["graph"], str(vert))
+        if not om.contains(outree, salidas):
+            om.put(outree, salidas, str(vert))
+        else:
+            A = om.get(outree, salidas)
+            B = me.getValue(A)
+            om.put(outree, salidas, str(B)+","+str(vert))
+    estaciones = lt.newList(datastructure="ARRAY_LIST")
+    while lt.size(estaciones) < 3:
+        val = om.get(outree, om.maxKey(outree))
+        val1 = me.getValue(val)
+        mayorsalida = val1.split(",")
+        for i in mayorsalida:
+            if lt.size(estaciones) < 3:
+                K = m.get(analyzer["nameIndex"], i)
+                L = me.getValue(K)
+                lt.addLast(estaciones, L)
+        om.deleteMax(outree)
     return estaciones
 
-# def top3menosUsadas(analyzer):
-#     totaltree = om.newMap(omaptype="RBT", comparefunction=compareIds)
-#     pqiterator = it.newIterator(vertexNames(analyzer))
-#     while it.hasNext(pqiterator):
-#         vert = int(it.next(pqiterator))
-#         usototal = (gr.outdegree(analyzer["graph"], str(vert)) + gr.indegree(analyzer["graph"], str(vert)))
-#         om.put(totaltree, usototal, vert)
-#     menortotal = []
-#     i = 0
-#     while i < 3:
-#         C = om.values(totaltree, om.minKey(totaltree), om.minKey(totaltree))
-#         minima = lt.firstElement(C)
-#         menortotal.append(minima)
-#         om.deleteMin(totaltree)
-#         i+=1
-#     estaciones = []
-#     for i in menortotal:
-#         H = m.get(analyzer["nameIndex"], str(i))
-#         G = me.getValue(H)
-#         estaciones.append(G)
-#     return estaciones
-
 def top3lessUsed(analyzer):
-    totaltable = m.newMap(numelements=600,
-                          maptype="CHAINING",
-                          loadfactor=1,
-                          comparefunction=comparer)
+    totaltree = om.newMap(omaptype="RBT", comparefunction=compareIds)
     pqiterator = it.newIterator(vertexNames(analyzer))
     while it.hasNext(pqiterator):
         vert = int(it.next(pqiterator))
-        usototal = (gr.outdegree(analyzer["graph"], str(vert)) + gr.indegree(analyzer["graph"], str(vert)))
-        if not m.contains(totaltable, usototal):
-            m.put(totaltable, usototal, str(vert))
+        salidas = gr.outdegree(analyzer["graph"], str(vert))
+        destinos = gr.indegree(analyzer["graph"], str(vert))
+        usototal = salidas + destinos
+        if not om.contains(totaltree, usototal):
+            om.put(totaltree, usototal, str(vert))
         else:
-            A = m.get(totaltable, usototal)
+            A = om.get(totaltree, usototal)
             B = me.getValue(A)
-            m.put(totaltable, usototal, str(B)+","+str(vert))
-    P = m.keySet(totaltable)
-    mrg.mergesort(P, lessfunction)
-    val = m.get(totaltable, lt.firstElement(P))
-    val1 = me.getValue(val)
-    menortotal = val1.split(",")[:3]
+            om.put(totaltree, usototal, str(B)+","+str(vert))
     estaciones = lt.newList(datastructure="ARRAY_LIST")
-    for i in menortotal:
-        K = m.get(analyzer["nameIndex"], i)
-        L = me.getValue(K)
-        lt.addLast(estaciones, L)
+    while lt.size(estaciones) < 3:
+        val = om.get(totaltree, om.minKey(totaltree))
+        val1 = me.getValue(val)
+        menortotal = val1.split(",")
+        for i in menortotal:
+            if lt.size(estaciones) < 3:
+                K = m.get(analyzer["nameIndex"], i)
+                L = me.getValue(K)
+                lt.addLast(estaciones, L)
+        om.deleteMin(totaltree)
     return estaciones
 
 # ==============================

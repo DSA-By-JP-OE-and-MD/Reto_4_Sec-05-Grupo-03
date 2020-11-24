@@ -47,17 +47,21 @@ operación seleccionada.
 def printReq3(resp):
     print("\n")
     print("TOP 3 ESTACIONES DE SALIDA")
-    for i in resp["salidas"]:
-        print("- "+i)
+    itresp = it.newIterator(resp["salidas"])
+    while it.hasNext(itresp):
+        M = it.next(itresp)
+        print("- "+M)
     print("\n")
     print("TOP 3 ESTACIONES DE DESTINO")
-    for i in resp["llegadas"]:
-        print("- "+i)
+    itresp2 = it.newIterator(resp["llegadas"])
+    while it.hasNext(itresp2):
+        F = it.next(itresp2)
+        print("- "+F)
     print("\n")
     print("TOP 3 ESTACIONES MENOS USADAS")
-    itresp = it.newIterator(resp["usadas"])
-    while it.hasNext(itresp):
-        R = it.next(itresp)
+    itresp3 = it.newIterator(resp["usadas"])
+    while it.hasNext(itresp3):
+        R = it.next(itresp3)
         print("- "+R)
 # ___________________________________________________
 #  Menu principal
