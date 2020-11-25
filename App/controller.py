@@ -93,4 +93,7 @@ def estacionesCriticas(analyzer):
          "salidas":B,
          "usadas":C}
     return N
+
+def listaEdades(analyzer, agerange):
+    return model.crearListaEdad(analyzer, agerange)
  

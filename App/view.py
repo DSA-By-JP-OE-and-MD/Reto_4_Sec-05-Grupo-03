@@ -103,7 +103,9 @@ def OpcionesMenu():
         if Kaneki == "I":
             analyzer = controller.InitCatalog()
             if analyzer != None:  
-                print("Catalogo creado") 
+                print("Catalogo creado")
+                sys.setrecursionlimit(20000)
+                print("Limite de recursión ajustado a: " + str(sys.getrecursionlimit())) 
             else:
                 print("Error al cargar el catalogo")
         
@@ -120,6 +122,11 @@ def OpcionesMenu():
         elif Kaneki == "3":
             X = controller.estacionesCriticas(analyzer)
             printReq3(X)
+
+        elif Kaneki == "5":
+            G = input("Ingrese su rango de edad (0-10, 11-20, 21-30, 31-40, 41-50, 51-60, 60+): ")
+            J = controller.listaEdades(analyzer, G)
+            print(J)
 
         elif Kaneki == "7":
             A = False

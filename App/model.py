@@ -45,8 +45,13 @@ de creacion y consulta sobre las estructuras de datos.
 # -----------------------------------------------------
 #                       API
 def analyzer():
-    analyzer = {"nameIndex":None,
+    analyzer = {"routeList":None,
+                "nameIndex":None,
                 "graph":None}
+
+    analyzer["routeList"] = lt.newList(datastructure="SINGLE_LINKED",
+                                       cmpfunction=compareIds)
+
     analyzer["nameIndex"] = m.newMap(numelements=1000, 
                                      maptype="PROBING",
                                      loadfactor=0.5, 
@@ -69,6 +74,7 @@ def AñadirRuta(analyzer, route):
     originName = route["start station name"]
     destinationName = route["end station name"]
     duration = int(route['tripduration'])
+    lt.addLast(analyzer["routeList"], route)
     AñadirEstacion(analyzer, origin)
     AñadirEstacion(analyzer, destination)
     AñadirConeccion(analyzer, origin, destination, duration)
@@ -193,6 +199,21 @@ def top3lessUsed(analyzer):
                 lt.addLast(estaciones, L)
         om.deleteMin(totaltree)
     return estaciones
+
+
+def crearListaEdad(analyzer, agerange):
+    if agerange == "60+":
+        rango = [60, 150]
+    else:
+        rango = agerange.split("-")
+    listaPorEdad = lt.newList(datastructure="SINGLE_LINKED", cmpfunction=compareIds)
+    routeiterator = it.newIterator(analyzer["routeList"])
+    while it.hasNext(routeiterator):
+        ruta = it.next(routeiterator)
+        edad = 2020 - int(ruta["birth year"])
+        if int(rango[0]) <= edad <= int(rango[1]):
+            lt.addLast(listaPorEdad, ruta)
+    return lt.size(listaPorEdad)
 
 # ==============================
 # Funciones de Comparacion
