@@ -78,6 +78,7 @@ def loadFile(analyzer, file):
                                 delimiter=",")
     for route in input_file:
         model.AñadirRuta(analyzer, route)
+        model.AñadiralIndex(analyzer, route)
     analyzer['components'] = scc.KosarajuSCC(analyzer['graph'])
         
     return analyzer
@@ -88,6 +89,21 @@ def loadFile(analyzer, file):
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+def RutaDeTurismo(latO, lonO, latD, lonD, analyzer):
+    UbicacionInicio = model.NombreEspecifico(model.EstaciónMasProxima(latO, lonO, analyzer)) 
+    UbicacionFInal = model.NombreEspecifico(model.EstaciónMasProxima(latD, lonD, analyzer)) 
+    A = model.CaminoMasCorto(latO, lonO, latD, lonD, analyzer)
+    B = model.ListaConID(A)
+    EstacionesDePormedio = model.NombresDeUnaLista(B, analyzer)
+    Tiempo = model.PesoDeLaLista(A)
+    if A == False:
+        return "No se encontro un camino entre estas 2 estaciones"
+    else:
+        return {"Estaciónd de inicio: ":UbicacionInicio, "Estación final: ":UbicacionFInal, "Estaciones de por medio :":EstacionesDePormedio, "Tiempo: ":Tiempo}
+        
+
+
+
 def totaldeclusters(analyzer):
     return model.TotaldeClusteres(analyzer)
 def clusterentre2id(analyzer,id1,id2):
