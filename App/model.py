@@ -118,10 +118,32 @@ def TotalDeArcos(analyzer):
 def vertexNames(analyzer):
     N = dfo.DepthFirstOrder(analyzer["graph"])
     return N["pre"]
+def vertexNamesAge(grafo):
+    N = dfo.DepthFirstOrder(grafo)
+    return N["pre"]
 
 # ==============================
 # Funciones Helper
 # ==============================
+
+
+def grafoEdades(listaViajes):
+    grafo = gr.newGraph(datastructure="ADJ_LIST",
+                        directed=True,
+                        size=1000,
+                        comparefunction=comparer)
+    iteEdades = it.newIterator(listaViajes)
+    while it.hasNext(iteEdades):
+        viaje = it.next(iteEdades)
+        estacion1 = viaje["start station id"]
+        estacion2 = viaje["end station id"]
+        duracion = int(viaje["tripduration"])
+        if not gr.containsVertex(grafo, estacion1):
+            gr.insertVertex(grafo, estacion1)
+        if not gr.containsVertex(grafo, estacion2):
+            gr.insertVertex(grafo, estacion2)
+        gr.addEdge(grafo, estacion1, estacion2, duracion)
+    return grafo
 
 def top3llegada(analyzer):
     intree = om.newMap(omaptype="RBT", comparefunction=compareIds)
@@ -200,8 +222,35 @@ def top3lessUsed(analyzer):
         om.deleteMin(totaltree)
     return estaciones
 
+def majorStart(grafo):
+    outree = om.newMap(omaptype="RBT", comparefunction=compareIds)
+    pqiterator = it.newIterator(vertexNamesAge(grafo))
+    while it.hasNext(pqiterator):
+        vert = it.next(pqiterator)
+        salidas = gr.outdegree(grafo, vert)
+        om.put(outree, salidas, vert)
+    if om.isEmpty(outree):
+        return None
+    else:
+        mayor = om.get(outree, om.maxKey(outree))
+        mayornombre = me.getValue(mayor)
+        return mayornombre
 
-def crearListaEdad(analyzer, agerange):
+def majorDestiny(grafo):
+    intree = om.newMap(omaptype="RBT", comparefunction=compareIds)
+    pqiterator = it.newIterator(vertexNamesAge(grafo))
+    while it.hasNext(pqiterator):
+        vert = it.next(pqiterator)
+        salidas = gr.indegree(grafo, vert)
+        om.put(intree, salidas, vert)
+    if om.isEmpty(intree):
+        return None
+    else:
+        mayor = om.get(intree, om.maxKey(intree))
+        mayornombre = me.getValue(mayor)
+        return mayornombre
+
+def crearGrafoEdad(analyzer, agerange):
     if agerange == "60+":
         rango = [60, 150]
     else:
@@ -213,7 +262,36 @@ def crearListaEdad(analyzer, agerange):
         edad = 2020 - int(ruta["birth year"])
         if int(rango[0]) <= edad <= int(rango[1]):
             lt.addLast(listaPorEdad, ruta)
-    return lt.size(listaPorEdad)
+    ageGraph = grafoEdades(listaPorEdad)
+    return {"grafo":ageGraph, "lista":listaPorEdad}
+
+def recomendarRutas(analyzer, agerange):
+    ageGraph = crearGrafoEdad(analyzer, agerange)
+    mayorsalida = majorStart(ageGraph["grafo"])
+    mayordestino = majorDestiny(ageGraph["grafo"])
+    if mayorsalida == None or mayordestino == None:
+        return "No existen rutas para este rango de edad"
+    else:
+        pesos = lt.newList(datastructure="ARRAY_LIST")
+        pathiterator = it.newIterator(ageGraph["lista"])
+        while it.hasNext(pathiterator):
+            viaje = it.next(pathiterator)
+            if viaje["start station id"] == mayorsalida and viaje["end station id"] == mayordestino:
+                lt.addLast(pesos, viaje["tripduration"])
+        if lt.isEmpty(pesos):
+            econ = None
+        else:
+            mrg.mergesort(pesos, lessfunction)
+            econ = lt.firstElement(pesos)
+        sal = m.get(analyzer["nameIndex"], mayorsalida)
+        salnombre = me.getValue(sal)
+        dest = m.get(analyzer["nameIndex"], mayordestino)
+        destnombre = me.getValue(dest)
+        W = {"salida":salnombre,
+             "destino":destnombre,
+             "tiempo":econ}
+        return W
+
 
 # ==============================
 # Funciones de Comparacion

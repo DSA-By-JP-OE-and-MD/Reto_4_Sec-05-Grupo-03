@@ -63,6 +63,20 @@ def printReq3(resp):
     while it.hasNext(itresp3):
         R = it.next(itresp3)
         print("- "+R)
+
+def printReq5(resp):
+    print("\n")
+    print("ESTACIÓN DE SALIDA MÁS POPULAR")
+    print("- "+resp["salida"])
+    print("\n")
+    print("ESTACIÓN DE DESTINO MÁS POPULAR")
+    print("- "+resp["destino"])
+    print("\n")
+    if resp["tiempo"] == None:
+        print("No existe un tiempo mínimo de una ruta directa")
+    else:
+        print("TIEMPO MÍNIMO ENTRE AMBAS ESTACIONES")
+        print(resp["tiempo"]+" segundos")
 # ___________________________________________________
 #  Menu principal
 def Menu():
@@ -125,8 +139,8 @@ def OpcionesMenu():
 
         elif Kaneki == "5":
             G = input("Ingrese su rango de edad (0-10, 11-20, 21-30, 31-40, 41-50, 51-60, 60+): ")
-            J = controller.listaEdades(analyzer, G)
-            print(J)
+            J = controller.recomendarRutas(analyzer, G)
+            printReq5(J)
 
         elif Kaneki == "7":
             A = False
