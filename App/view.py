@@ -98,6 +98,23 @@ def OpcionesMenu():
             for n in Data:
                 print(n)
 
+        elif Kaneki == "4":
+            origen = str(input("Escriba la estación de partida: "))
+            limites = input("¿Limite de tiempo ?(min)")
+            t1 = process_time()
+            Ciclos = controller.CiclosIdealesTurismomod(analyzer, origen, limites)
+            t2 = process_time()
+            if Ciclos == False:
+                print("Desde esta estación no se obtuvieron rutas ciclicas")
+            elif Ciclos == "Vacio":
+                print("Ninguna de las rutas ciclicas cumple con los tiempos establecidos")
+            else:
+                print("La(s) ruta(s) ideal(es) para hacer turismo desde esa estación es/son: ")
+                for I in Ciclos:
+                    print(graph.edges(Ciclos[I]))
+                    print("----------------------------------------------------------------------------")
+            print("Tiempo de ejecución: ",t2-t1)
+
         elif Kaneki == "7":
             A = False
 OpcionesMenu()
