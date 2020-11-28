@@ -137,8 +137,6 @@ def vertexNamesAge(grafo):
 # Funciones Helper
 # ==============================
 
-def TiempoNecesariomod(analyzer, GPCC, limites):
-
 def CiclosDelOrigen(analyzer, origen):
     """
     Busca todos los vectores pertenecientes a el/los ciclo(s) fuertemente conectado(s)
@@ -253,8 +251,8 @@ def TiempoNecesario(analyzer, GPCC, limites):
           
 
 def TiempoNecesariomod(analyzer, GPCC, limites):
-  if GPCC == False:
-        return False
+    if GPCC == False:
+        return False    
     else:
         Ideal = {}
         Pesos = {}
