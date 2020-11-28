@@ -93,6 +93,12 @@ def totaldeclusters(analyzer):
     return model.TotaldeClusteres(analyzer)
 def clusterentre2id(analyzer,id1,id2):
     return model.ClusterPresence(analyzer,id1,id2)
+
+def CiclosIdealesTurismomod(analyzer, origen, limites):
+    A = model.CiclosDelOrigen(analyzer, origen)
+    B = model.LectorDeCiclos(analyzer, origen, A)
+    C = model.GrafosPorCiclo(analyzer, origen, B)
+    D = model.TiempoNecesario(analyzer, C)
     
 def CiclosIdealesTurismo(analyzer, origen, limites):
     A = model.CiclosDelOrigen(analyzer, origen)
