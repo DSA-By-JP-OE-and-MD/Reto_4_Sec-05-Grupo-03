@@ -27,6 +27,7 @@ from DISClib.ADT import graph
 from DISClib.Algorithms.Graphs import scc
 import config as cf
 from App import model
+from DISClib.ADT import orderedmap as om
 import csv
 import os
 """
@@ -102,3 +103,15 @@ def CiclosIdealesTurismo(analyzer, origen, limites):
         return D
     else:
         return C
+
+def estacionesCriticas(analyzer):
+    A = model.top3llegada(analyzer)
+    B = model.top3salida(analyzer)
+    C = model.top3lessUsed(analyzer)
+    N = {"llegadas":A,
+         "salidas":B,
+         "usadas":C}
+    return N
+
+def recomendarRutas(analyzer, agerange):
+    return model.recomendarRutas(analyzer, agerange)

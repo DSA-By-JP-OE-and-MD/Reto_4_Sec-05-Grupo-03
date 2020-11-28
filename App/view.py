@@ -29,6 +29,7 @@ import sys
 import config
 from App import controller
 from DISClib.ADT import stack
+from DISClib.DataStructures import listiterator as it
 import timeit
 from time import process_time
 assert config
@@ -47,7 +48,39 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
+def printReq3(resp):
+    print("\n")
+    print("TOP 3 ESTACIONES DE SALIDA")
+    itresp = it.newIterator(resp["salidas"])
+    while it.hasNext(itresp):
+        M = it.next(itresp)
+        print("- "+M)
+    print("\n")
+    print("TOP 3 ESTACIONES DE DESTINO")
+    itresp2 = it.newIterator(resp["llegadas"])
+    while it.hasNext(itresp2):
+        F = it.next(itresp2)
+        print("- "+F)
+    print("\n")
+    print("TOP 3 ESTACIONES MENOS USADAS")
+    itresp3 = it.newIterator(resp["usadas"])
+    while it.hasNext(itresp3):
+        R = it.next(itresp3)
+        print("- "+R)
 
+def printReq5(resp):
+    print("\n")
+    print("ESTACIÓN DE SALIDA MÁS POPULAR")
+    print("- "+resp["salida"])
+    print("\n")
+    print("ESTACIÓN DE DESTINO MÁS POPULAR")
+    print("- "+resp["destino"])
+    print("\n")
+    if resp["tiempo"] == None:
+        print("No existe un tiempo mínimo de una ruta directa")
+    else:
+        print("TIEMPO MÍNIMO ENTRE AMBAS ESTACIONES")
+        print(resp["tiempo"]+" segundos")
 # ___________________________________________________
 #  Menu principal
 def Menu():
@@ -88,7 +121,9 @@ def OpcionesMenu():
         if Kaneki == "I":
             analyzer = controller.InitCatalog()
             if analyzer != None:  
-                print("Catalogo creado") 
+                print("Catalogo creado")
+                sys.setrecursionlimit(20000)
+                print("Limite de recursión ajustado a: " + str(sys.getrecursionlimit())) 
             else:
                 print("Error al cargar el catalogo")
         
@@ -123,7 +158,15 @@ def OpcionesMenu():
                     print("----------------------------------------------------------------------------")
             print("Tiempo de ejecución: ",t2-t1)        
 
-            
+        elif Kaneki == "3":
+            X = controller.estacionesCriticas(analyzer)
+            printReq3(X)
+
+        elif Kaneki == "5":
+            G = input("Ingrese su rango de edad (0-10, 11-20, 21-30, 31-40, 41-50, 51-60, 60+): ")
+            J = controller.recomendarRutas(analyzer, G)
+            printReq5(J)
+
         elif Kaneki == "7":
             A = False
 OpcionesMenu()
