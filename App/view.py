@@ -31,7 +31,11 @@ from App import controller
 from DISClib.ADT import stack
 from DISClib.DataStructures import listiterator as it
 import timeit
+from time import process_time
 assert config
+from DISClib.Algorithms.Graphs import scc
+from DISClib.ADT import graph
+from  DISClib.ADT import map as m
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -127,11 +131,32 @@ def OpcionesMenu():
             Req1(analyzer)
 
         elif Kaneki == "0":
+            t1 = process_time()
             Data = controller.loadTrips(analyzer)
+            t2 = process_time()
             print("Se cargaron los archivos:")
             print("\n")
             for n in Data:
                 print(n)
+            print("Tiempo",t2-t1)
+        
+
+        elif Kaneki == "2":
+            origen = str(input("Escriba la estación de partida: "))
+            limites = input("¿Limites de tiempo de 180 a 210 minutos?(True/False): ")
+            t1 = process_time()
+            Ciclos = controller.CiclosIdealesTurismo(analyzer, origen, limites)
+            t2 = process_time()
+            if Ciclos == False:
+                print("Desde esta estación no se obtuvieron rutas ciclicas")
+            elif Ciclos == "Vacio":
+                print("Ninguna de las rutas ciclicas cumple con los tiempos establecidos")
+            else:
+                print("La(s) ruta(s) ideal(es) para hacer turismo desde esa estación es/son: ")
+                for I in Ciclos:
+                    print(graph.edges(Ciclos[I]))
+                    print("----------------------------------------------------------------------------")
+            print("Tiempo de ejecución: ",t2-t1)        
 
         elif Kaneki == "3":
             X = controller.estacionesCriticas(analyzer)
@@ -145,3 +170,4 @@ def OpcionesMenu():
         elif Kaneki == "7":
             A = False
 OpcionesMenu()
+
