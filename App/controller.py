@@ -23,9 +23,11 @@
  * Dario Correal
  *
  """
-
+from DISClib.ADT import graph
+from DISClib.Algorithms.Graphs import scc
 import config as cf
 from App import model
+from DISClib.ADT import orderedmap as om
 import csv
 import os
 """
@@ -43,6 +45,12 @@ def InitCatalog():
     return Analyzer
 # ___________________________________________________
 
+def NoelleImpacto(analyzer, origen):
+    A = model.GrafosPorCiclo(analyzer, origen)
+    if A == False:
+        return "No se pueden encontrar ciclos con esta estación"
+    else:
+        return A
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
@@ -71,6 +79,8 @@ def loadFile(analyzer, file):
                                 delimiter=",")
     for route in input_file:
         model.AñadirRuta(analyzer, route)
+    analyzer['components'] = scc.KosarajuSCC(analyzer['graph'])
+        
     return analyzer
 
 
@@ -90,3 +100,24 @@ def CiclosIdealesTurismomod(analyzer, origen, limites):
     C = model.GrafosPorCiclo(analyzer, origen, B)
     D = model.TiempoNecesario(analyzer, C)
     
+def CiclosIdealesTurismo(analyzer, origen, limites):
+    A = model.CiclosDelOrigen(analyzer, origen)
+    B = model.LectorDeCiclos(analyzer, origen, A)
+    C = model.GrafosPorCiclo(analyzer, origen, B)
+    if limites == True:
+        D = model.TiempoNecesario(analyzer, C)
+        return D
+    else:
+        return C
+
+def estacionesCriticas(analyzer):
+    A = model.top3llegada(analyzer)
+    B = model.top3salida(analyzer)
+    C = model.top3lessUsed(analyzer)
+    N = {"llegadas":A,
+         "salidas":B,
+         "usadas":C}
+    return N
+
+def recomendarRutas(analyzer, agerange):
+    return model.recomendarRutas(analyzer, agerange)
