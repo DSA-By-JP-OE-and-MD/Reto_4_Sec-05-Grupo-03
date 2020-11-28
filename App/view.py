@@ -155,8 +155,18 @@ def OpcionesMenu():
                 print("La(s) ruta(s) ideal(es) para hacer turismo desde esa estación es/son: ")
                 for I in Ciclos:
                     print(graph.edges(Ciclos[I]))
-                    print("----------------------------------------------------------------------------")
-            print("Tiempo de ejecución: ",t2-t1)        
+                    prin("----------------------------------------------------------------------------")
+            print("Tiempo de ejecución: ",t2-t1)     
+        elif Kaneki == "6":  
+            LatIn = str(input("Latitud inicio: "))
+            LonIn = str(input("Longitud inicial: "))
+            LatFi = str(input("latitud final: "))
+            LonFi = str(input("Longitud final: "))
+            A = controller.RutaDeTurismo(LatIn, LonIn, LatFi, LonFi, analyzer)
+            print(A)
+            
+            
+
 
         elif Kaneki == "3":
             X = controller.estacionesCriticas(analyzer)

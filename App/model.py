@@ -23,14 +23,17 @@
  * Dario Correal
  *
  """
+from DISClib.Utils import Haversine as ha
 import config
 from DISClib.ADT import queue
+from DISClib.ADT import stack
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT.graph import gr
 from DISClib.DataStructures import edge as ed
 from DISClib.ADT import map as m
 from DISClib.ADT import orderedmap as om
 from DISClib.ADT import list as lt
+from DISClib.Algorithms.Sorting import mergesort as merge
 from DISClib.DataStructures import listiterator as it
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import scc
@@ -53,6 +56,14 @@ def analyzer():
                 "nameIndex":None,
                 "graph":None,
                 "components":None}
+<<<<<<< HEAD
+    analyzer["index"] = m.newMap(numelements=1000, 
+                                  prime=109345121, 
+                                  maptype="CHAINING",
+                                  loadfactor=1.0, 
+                                  comparefunction=comparerMap)      
+=======
+>>>>>>> ac7214915db2914f3772b2b1cae45d0a12bc8b94
 
     analyzer["routeList"] = lt.newList(datastructure="SINGLE_LINKED",
                                        cmpfunction=compareIds)
@@ -71,8 +82,14 @@ def analyzer():
 # -----------------------------------------------------
 
 # Funciones para agregar informacion al grafo
+def AñadiralIndex(analyzer, route):
+    ID = route["start station id"]
+    if not m.contains(analyzer["index"], ID):
+        m.put(analyzer["index"], ID, route)
+    
 def AñadirRuta(analyzer, route):
     """
+    Si
     """
     origin = route['start station id']
     destination = route['end station id']
@@ -272,6 +289,66 @@ def TiempoNecesariomod(analyzer, GPCC, limites):
         else:
             return Ideal
 
+<<<<<<< HEAD
+def EstaciónMasProxima(latO, lonO, analyzer):
+    idynombre = []
+    prox = lt.newList(datastructure="ARRAY_LIST", cmpfunction=comparador)
+    Index = analyzer["index"]
+    A = m.keySet(Index)
+    a = it.newIterator(A)
+    while it.hasNext(a):
+        B = it.next(a)
+        C = m.get(Index, B)
+        B = me.getValue(C)
+        latitud = B["start station latitude"]
+        longitud = B["start station longitude"]
+        distancia = ha.haversine(float(lonO), float(latO), float(longitud), float(latitud))
+        B["Distancia al punto"] = distancia
+        lt.addLast(prox, B)
+    merge.mergesort(prox, MasProximo)
+    resultado = lt.firstElement(prox)
+    idynombre.append(resultado["start station name"])
+    idynombre.append(resultado["start station id"])
+    return idynombre
+
+def CaminoMasCorto(latO, lonO, latD, lonD, analyzer):
+    EstacionInicio = EstaciónMasProxima(latO, lonO, analyzer)
+    EstacionMeta = EstaciónMasProxima(latD, lonD, analyzer)
+    M = djk.Dijkstra(analyzer["graph"], EstacionInicio[1])
+    if djk.hasPathTo(M, EstacionMeta[1]):
+        F = djk.pathTo(M, EstacionMeta[1])
+        return F
+    else:
+        return False
+def NombreEspecifico(listapy):
+    A = listapy[0]
+    return A
+
+def ListaConID(lista):
+    A = []
+    while stack.size(lista) != 0:
+        B = (stack.pop(lista))
+        N = B["vertexB"]
+        A.append(N)
+    return A
+
+def NombresDeUnaLista(lista, analyzer):
+    L = []
+    I = analyzer["index"]
+    for a in lista:
+        A = m.get(I, a)
+        C = me.getValue(A)
+        C = C["start station name"]
+        L.append(C)
+    return L
+def PesoDeLaLista(lista):
+    A = 0
+    while stack.size(lista) != 0:
+        b = (stack.pop(lista))
+        n = b["weight"]
+        A += float(n)
+    return A
+=======
 def grafoEdades(listaViajes):
     grafo = gr.newGraph(datastructure="ADJ_LIST",
                         directed=True,
@@ -436,6 +513,7 @@ def recomendarRutas(analyzer, agerange):
              "destino":destnombre,
              "tiempo":econ}
         return W
+>>>>>>> ac7214915db2914f3772b2b1cae45d0a12bc8b94
 
 # ==============================
 # Funciones de Comparacion
@@ -472,7 +550,22 @@ def comparador(key1, key2):
     else:
         return -1
 
+<<<<<<< HEAD
+def comparerMap(keyname, value):
+    entry = me.getKey(value)
+    if (keyname == entry):
+        return 0
+    elif (keyname > entry):
+        return 1
+    else:
+        return -1
+def MasProximo(ele1, ele2):
+    if float(ele1["Distancia al punto"]) > float(ele2["Distancia al punto"]):
+        return True
+    return False
+=======
 def lessfunction(ele1, ele2):
     if ele1 < ele2:
         return True
     return False
+>>>>>>> ac7214915db2914f3772b2b1cae45d0a12bc8b94

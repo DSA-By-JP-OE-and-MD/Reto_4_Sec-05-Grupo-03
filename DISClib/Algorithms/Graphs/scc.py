@@ -132,7 +132,6 @@ def connectedComponents(scc):
 #              Funciones Auxiliares
 # --------------------------------------------------
 
-
 def reverseGraph(graph):
     """
         Retornar el reverso del grafo graph
