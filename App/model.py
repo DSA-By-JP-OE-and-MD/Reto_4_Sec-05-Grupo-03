@@ -24,12 +24,16 @@
  *
  """
 import config
+from DISClib.ADT import queue
+from DISClib.DataStructures import mapentry as me
 from DISClib.ADT.graph import gr
+from DISClib.DataStructures import edge as ed
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
+from DISClib.DataStructures import adjlist as adj
 from DISClib.Utils import error as error
 assert config
 
@@ -102,6 +106,96 @@ def TotalDeArcos(analyzer):
 # ==============================
 # Funciones Helper
 # ==============================
+
+def CiclosDelOrigenmod(analyzer, origen):
+    """
+    Busca todos los vectores pertenecientes a el/los ciclo(s) fuertemente conectado(s)
+    relacionados al origen para tomar los valores de cada ciclo.
+    
+    """
+    #CRAO = Ciclos Relacionados Al Origen
+    CRAO = lt.newList(datastructure="ARRAY_LIST")
+    Revisar = analyzer["components"]["idscc"]
+    a = it.newIterator(m.keySet(Revisar))
+    while it.hasNext(a):
+        Lector = it.next(a)
+        if me.getKey(m.get(Revisar, Lector)) == origen:
+            lt.addLast(CRAO, me.getValue(m.get(Revisar, Lector)))
+    if lt.size(CRAO) == 0:
+        return False
+    else:
+        return CRAO
+    
+def LectorDeCiclosmod(analyzer, origen, CRAO):
+    """
+    Se crea un diccionario con el valor de cada ciclo al que pertenece el origen,
+    cada valor tiene una lista encadenada con los vertices de cada ciclo (excluyendo el origen)
+    """
+    #VDC = Vertices Del Ciclo
+    VDC = {}
+    valores = CRAO
+    if valores == False:
+        return False
+    else:
+        a = it.newIterator(valores)
+        while it.hasNext(a):
+            b = it.next(a)
+            VDC[b] = lt.newList(datastructure="ARRAY_LIST", cmpfunction=comparador)
+            A = it.newIterator(m.keySet(analyzer["components"]["idscc"]))
+            while it.hasNext(A):
+                B = it.next(A)
+                C = me.getValue(m.get(analyzer["components"]["idscc"], B))
+                if C == b and C != origen:
+                    lt.addLast(VDC[b], B)
+        return VDC
+
+def GrafosPorCiclomod(analyzer, origen, VDC):
+    """
+    Genera un grafo por cada ciclo diferente relacionado al origen y los añade a
+    GPCC (diccionario)
+    """
+    #GPCC = Grafos Por Cada Ciclo
+    GPCC = {}
+    if VDC == False:
+        return False
+    else:
+        for Valor in VDC:
+            Cierre = False
+            GPCC[Valor] = gr.newGraph(datastructure="ADJ_LIST",
+                                        directed=True,
+                                        size=6,
+                                        comparefunction=comparer)
+            gr.insertVertex(GPCC[Valor], origen)
+            actual = origen
+            mismo = origen
+            Adjacentes = adj.adjacents(analyzer["graph"], actual)
+            Adjacentes["cmpfunction"] = comparador
+            while Cierre == False:
+                a = it.newIterator(VDC[Valor])
+                while it.hasNext(a):
+                    b = it.next(a)
+                    if actual != mismo:
+                        Adjacentes = adj.adjacents(analyzer["graph"], actual)
+                        Adjacentes["cmpfunction"] = comparador
+                        mismo = actual
+                    if not gr.containsVertex(GPCC[Valor], b):
+                        if lt.isPresent(Adjacentes, origen) != 0 and actual != origen and b != origen:
+                            gr.insertVertex(GPCC[Valor], b)
+                            Tartalia = gr.getEdge(analyzer["graph"], actual, origen)
+                            Peso = int(ed.weight(Tartalia)/Tartalia["Repeticiones"])
+                            adj.addEdge(GPCC[Valor], actual, origen, Peso)
+                            actual = b
+                            Cierre = True
+                        elif lt.isPresent(Adjacentes, b) != 0 and b != origen:
+                            gr.insertVertex(GPCC[Valor], b)
+                            Tartalia = gr.getEdge(analyzer["graph"], actual, b)
+                            Peso = int(ed.weight(Tartalia)/Tartalia["Repeticiones"])
+                            adj.addEdge(GPCC[Valor], actual, b, Peso)
+                            actual = b  
+                    elif actual == origen and lt.size(VDC[Valor]) == 1:
+                            Cierre = True       
+        return GPCC
+
 def TiempoNecesariomod(analyzer, GPCC, limites):
     if GPCC == False:
         return False
@@ -126,6 +220,17 @@ def TiempoNecesariomod(analyzer, GPCC, limites):
 # ==============================
 # Funciones de Comparacion
 # ==============================
+def compareIds(id1, id2):
+    """
+    Compara dos crimenes
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+
 def comparer(stop, keyvaluestop):
     """
     Compara dos estaciones
@@ -137,3 +242,17 @@ def comparer(stop, keyvaluestop):
         return 1
     else:
         return -1
+      
+def comparenames(searchname, element):
+    return (searchname == element['key'])
+
+def comparador(key1, key2):
+    if key1==key2:
+        return 0
+    else:
+        return -1
+
+def lessfunction(ele1, ele2):
+    if ele1 < ele2:
+        return True
+    return False

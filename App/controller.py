@@ -24,6 +24,8 @@
  *
  """
 
+from DISClib.ADT import graph
+from DISClib.Algorithms.Graphs import scc
 import config as cf
 from App import model
 import csv
@@ -43,7 +45,12 @@ def InitCatalog():
     return Analyzer
 # ___________________________________________________
 
-
+def NoelleImpacto(analyzer, origen):
+    A = model.GrafosPorCiclo(analyzer, origen)
+    if A == False:
+        return "No se pueden encontrar ciclos con esta estación"
+    else:
+        return A
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
@@ -85,8 +92,9 @@ def clusterentre2id(analyzer,id1,id2):
     return model.ClusterPresence(analyzer,id1,id2)
 
 def CiclosIdealesTurismomod(analyzer, origen, limites):
-    A = model.CiclosDelOrigen(analyzer, origen)
-    B = model.LectorDeCiclos(analyzer, origen, A)
-    C = model.GrafosPorCiclo(analyzer, origen, B)
-    D = model.TiempoNecesario(analyzer, C)
+    A = model.CiclosDelOrigenmod(analyzer, origen)
+    B = model.LectorDeCiclosmod(analyzer, origen, A)
+    C = model.GrafosPorCiclomod(analyzer, origen, B)
+    D = model.TiempoNecesariomod(analyzer, C, limites)
+    return D
     

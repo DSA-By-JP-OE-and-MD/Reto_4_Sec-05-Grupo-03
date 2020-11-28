@@ -30,7 +30,11 @@ import config
 from App import controller
 from DISClib.ADT import stack
 import timeit
+from time import process_time
 assert config
+from DISClib.Algorithms.Graphs import scc
+from DISClib.ADT import graph
+from  DISClib.ADT import map as m
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -100,7 +104,7 @@ def OpcionesMenu():
 
         elif Kaneki == "4":
             origen = str(input("Escriba la estación de partida: "))
-            limites = input("¿Limite de tiempo ?(min)")
+            limites = int(input("¿Limite de tiempo ?(min)"))
             t1 = process_time()
             Ciclos = controller.CiclosIdealesTurismomod(analyzer, origen, limites)
             t2 = process_time()
